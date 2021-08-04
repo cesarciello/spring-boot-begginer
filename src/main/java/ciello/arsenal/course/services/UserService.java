@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ciello.arsenal.course.repositories.UserRepository;
+import ciello.arsenal.course.services.exceptions.ResourceNotFoundException;
 import ciello.arsenal.course.entities.User;
 
 @Service
@@ -20,7 +21,7 @@ public class UserService {
 	
 	public User findById(Long id) {
 		Optional<User> user = userRepository.findById(id);
-		return user.get();
+		return user.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 	
 	public User create(User user) {
