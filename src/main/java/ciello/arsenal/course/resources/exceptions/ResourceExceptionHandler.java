@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import ciello.arsenal.course.services.exceptions.DatabaseException;
 import ciello.arsenal.course.services.exceptions.ResourceNotFoundException;
 
 @ControllerAdvice
@@ -18,6 +19,14 @@ public class ResourceExceptionHandler {
 	public ResponseEntity<StandardError> resourceNotFound(ResourceNotFoundException error, HttpServletRequest httpServletRequest) {
 		var errorMsg = "Resource not found.";
 		var httpStatus = HttpStatus.NOT_FOUND;
+		var standError = new StandardError(Instant.now(), httpStatus.value(), errorMsg, error.getMessage(), httpServletRequest.getRequestURI());
+		return ResponseEntity.status(httpStatus).body(standError);
+	}
+	
+	@ExceptionHandler(DatabaseException.class)
+	public ResponseEntity<StandardError> database(DatabaseException error, HttpServletRequest httpServletRequest) {
+		var errorMsg = "Database error.";
+		var httpStatus = HttpStatus.BAD_REQUEST;
 		var standError = new StandardError(Instant.now(), httpStatus.value(), errorMsg, error.getMessage(), httpServletRequest.getRequestURI());
 		return ResponseEntity.status(httpStatus).body(standError);
 	}
